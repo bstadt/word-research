@@ -65,6 +65,8 @@ export default function Home() {
       router.push("/onboarding");
     }
     if (user) {
+      // Request location permission early so it's ready for word submissions
+      navigator.geolocation.getCurrentPosition(() => {}, () => {});
       fetchRecent();
 
       // Refresh the token silently every 45 min via One Tap
@@ -114,7 +116,10 @@ export default function Home() {
       lat = pos.coords.latitude;
       lng = pos.coords.longitude;
     } catch {
-      // location is optional
+      setSubmitting(false);
+      setFlash("Location access is needed to log words. Please enable it in your browser settings.");
+      setTimeout(() => setFlash(""), 5000);
+      return;
     }
 
     const res = await fetch("/api/words", {
@@ -236,7 +241,7 @@ export default function Home() {
         </form>
 
         {flash && (
-          <p className="text-sm text-green-500 font-medium">{flash}</p>
+          <p className={`text-sm font-medium ${flash.startsWith("Location") ? "text-yellow-500" : "text-green-500"}`}>{flash}</p>
         )}
 
         {recentWords.length > 0 && (
