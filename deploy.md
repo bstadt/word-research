@@ -3,29 +3,18 @@
 ## Prerequisites
 
 - Ubuntu/Debian AWS instance (t3.small is fine to start)
-- Node.js 20+ installed
-- nginx installed
-- A domain pointed at the instance IP
-- Google OAuth credentials (see below)
+- DNS A record pointing your domain at the instance IP
+- Google OAuth authorized JavaScript origin added for `https://your-domain.com`
 
-## 1. Google OAuth Setup
-
-1. Go to https://console.cloud.google.com/apis/credentials
-2. Create a new project (or use existing)
-3. Configure OAuth consent screen (External, add your domain)
-4. Create OAuth 2.0 Client ID → Web application
-5. Add authorized redirect URI: `https://your-domain.com/api/auth/callback/google`
-6. Note the Client ID and Client Secret
-
-## 2. Server Setup
+## 1. Server Setup
 
 ```bash
-# Install Node.js 20 if not present
+# Install Node.js 20 and nginx
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs
+sudo apt-get install -y nodejs nginx
 
 # Clone and install
-git clone <repo-url> ~/word-research
+git clone https://github.com/bstadt/word-research.git ~/word-research
 cd ~/word-research/app
 npm install
 
@@ -38,11 +27,16 @@ Fill in `.env`:
 ```
 AUTH_GOOGLE_ID=<your-client-id>
 AUTH_GOOGLE_SECRET=<your-client-secret>
-AUTH_SECRET=<run: openssl rand -base64 32>
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=<your-client-id>
 AUTH_URL=https://your-domain.com
 ```
 
-## 3. nginx Config
+```bash
+# Build
+npm run build
+```
+
+## 2. nginx Config
 
 ```bash
 sudo nano /etc/nginx/sites-available/word-research
@@ -69,17 +63,18 @@ server {
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/word-research /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
-## 4. HTTPS with Certbot
+## 3. HTTPS with Certbot
 
 ```bash
-sudo apt install certbot python3-certbot-nginx
+sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d your-domain.com
 ```
 
-## 5. Run as systemd Service
+## 4. systemd Service
 
 ```bash
 sudo nano /etc/systemd/system/word-research.service
@@ -103,17 +98,12 @@ WantedBy=multi-user.target
 ```
 
 ```bash
-# Build first
-cd ~/word-research/app
-bash scripts/start.sh  # initial build
-
-# Then enable the service (it just runs npm start, build is already done)
 sudo systemctl enable word-research
 sudo systemctl start word-research
 sudo systemctl status word-research
 ```
 
-## 6. Scoring Cron
+## 5. Scoring Cron
 
 ```bash
 crontab -e
@@ -124,7 +114,7 @@ Add:
 0 0 * * * cd /home/ubuntu/word-research/app && /usr/bin/npx tsx scripts/score.ts >> /var/log/word-score.log 2>&1
 ```
 
-## 7. Verify
+## 6. Verify
 
 - Visit https://your-domain.com — should see landing page
 - Sign in with Google

@@ -123,7 +123,11 @@ export default function Profile() {
         )}
 
         <div>
-          <h2 className="font-medium mb-3">Leaderboard</h2>
+          <h2 className="font-medium mb-1">Daily Leaderboard</h2>
+          <p className="text-xs text-foreground/40 mb-3">
+            Scores are recalculated every night at midnight. You get points for
+            spotting words early that others later log too.
+          </p>
           {leaderboard.length === 0 ? (
             <p className="text-sm text-foreground/50">
               No scores yet. Keep logging words!
