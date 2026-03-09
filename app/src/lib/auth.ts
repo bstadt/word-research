@@ -1,5 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 import { cookies } from "next/headers";
+import { randomUUID } from "crypto";
 import { getDb } from "./db";
 
 const client = new OAuth2Client(process.env.AUTH_GOOGLE_ID);
@@ -55,10 +56,19 @@ export async function getUser(): Promise<AuthUser | null> {
   return user;
 }
 
-export function getUserSubcultures(userId: string): string | null {
-  const db = getDb();
-  const row = db
-    .prepare("SELECT subcultures FROM users WHERE id = ?")
-    .get(userId) as { subcultures: string | null } | undefined;
-  return row?.subcultures ?? null;
+/** Get or create an anonymous ID cookie for users who aren't logged in */
+export async function getAnonymousId(): Promise<string> {
+  const cookieStore = await cookies();
+  const existing = cookieStore.get("anon_id")?.value;
+  if (existing) return existing;
+
+  const id = randomUUID();
+  cookieStore.set("anon_id", id, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 365, // 1 year
+    path: "/",
+  });
+  return id;
 }
