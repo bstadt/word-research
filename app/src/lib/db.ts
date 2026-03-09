@@ -33,6 +33,7 @@ function migrate(db: Database.Database) {
       word TEXT NOT NULL,
       definition TEXT,
       subculture TEXT,
+      source_url TEXT,
       lat REAL,
       lng REAL,
       loc_type TEXT,

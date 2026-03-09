@@ -21,6 +21,7 @@ export default function Home() {
   const [word, setWord] = useState("");
   const [definition, setDefinition] = useState("");
   const [subculture, setSubculture] = useState("");
+  const [sourceUrl, setSourceUrl] = useState("");
   const [showOptional, setShowOptional] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [flash, setFlash] = useState("");
@@ -173,6 +174,7 @@ export default function Home() {
         word: word.trim(),
         definition: definition.trim() || null,
         subculture: subculture.trim() || null,
+        sourceUrl: sourceUrl.trim() || null,
         lat,
         lng,
         locType,
@@ -186,6 +188,7 @@ export default function Home() {
       setWord("");
       setDefinition("");
       setSubculture("");
+      setSourceUrl("");
       setShowOptional(false);
       fetchRecent();
       setTimeout(() => setFlash(""), 2000);
@@ -286,24 +289,31 @@ export default function Home() {
               onClick={() => setShowOptional(true)}
               className="text-sm text-foreground/40 hover:text-foreground/60 transition cursor-pointer"
             >
-              + add definition or subculture
+              + add url, definition, or subculture
             </button>
           )}
 
           {showOptional && (
             <>
               <input
+                type="url"
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+                placeholder="(optional) Did you see it online? Link to it here!"
+                className="w-full px-4 py-2 rounded-lg border border-foreground/20 bg-transparent text-sm focus:outline-none focus:border-foreground/50"
+              />
+              <input
                 type="text"
                 value={definition}
                 onChange={(e) => setDefinition(e.target.value)}
-                placeholder="Definition (optional)"
+                placeholder="(optional) What does it mean? How is it used?"
                 className="w-full px-4 py-2 rounded-lg border border-foreground/20 bg-transparent text-sm focus:outline-none focus:border-foreground/50"
               />
               <input
                 type="text"
                 value={subculture}
                 onChange={(e) => setSubculture(e.target.value)}
-                placeholder="Subculture (optional)"
+                placeholder="(optional) Did a particular subculture use it?"
                 className="w-full px-4 py-2 rounded-lg border border-foreground/20 bg-transparent text-sm focus:outline-none focus:border-foreground/50"
               />
             </>
@@ -312,9 +322,14 @@ export default function Home() {
           <button
             type="submit"
             disabled={!word.trim() || submitting}
-            className="w-full py-3 rounded-lg bg-foreground text-background font-medium disabled:opacity-40 hover:opacity-90 transition cursor-pointer"
+            className="w-full py-3 rounded-lg bg-foreground text-background font-medium disabled:opacity-40 hover:opacity-90 transition cursor-pointer flex items-center justify-center gap-2"
           >
-            {submitting ? "..." : "Log it"}
+            {submitting ? (
+              <>
+                <span className="inline-block w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
+                Logging...
+              </>
+            ) : "Log it"}
           </button>
         </form>
 

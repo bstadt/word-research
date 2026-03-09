@@ -87,18 +87,9 @@ export default function Profile() {
       </header>
 
       <main className="p-4 space-y-6">
-        <div className="flex items-center gap-4">
-          {user.image && (
-            <img
-              src={user.image}
-              alt=""
-              className="w-12 h-12 rounded-full"
-            />
-          )}
-          <div>
-            <p className="font-medium">{user.name}</p>
-            <p className="text-sm text-foreground/60">{user.email}</p>
-          </div>
+        <div>
+          <p className="font-medium">{user.name}</p>
+          <p className="text-sm text-foreground/60">{user.email}</p>
         </div>
 
         {me && (
@@ -141,13 +132,6 @@ export default function Profile() {
                   <span className="text-sm text-foreground/40 w-6">
                     {i + 1}
                   </span>
-                  {entry.image && (
-                    <img
-                      src={entry.image}
-                      alt=""
-                      className="w-8 h-8 rounded-full"
-                    />
-                  )}
                   <span className="flex-1 text-sm">{entry.name}</span>
                   <span className="text-sm font-medium">
                     {entry.score.toFixed(1)}

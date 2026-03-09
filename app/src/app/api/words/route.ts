@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const user = await getUser();
   const anonymousId = user ? null : await getAnonymousId();
 
-  const { word, definition, subculture, lat, lng, locType, ip: clientIp } = await req.json();
+  const { word, definition, subculture, sourceUrl, lat, lng, locType, ip: clientIp } = await req.json();
 
   const ip =
     clientIp ||
@@ -22,12 +22,13 @@ export async function POST(req: NextRequest) {
 
   const db = getDb();
   db.prepare(
-    `INSERT INTO words (word, definition, subculture, lat, lng, loc_type, user_id, anonymous_id, ip)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO words (word, definition, subculture, source_url, lat, lng, loc_type, user_id, anonymous_id, ip)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     normalized,
     definition || null,
     subculture || null,
+    sourceUrl || null,
     lat || null,
     lng || null,
     locType || null,
