@@ -8,7 +8,6 @@ interface User {
   email: string;
   name: string;
   image: string;
-  subcultures: string | null;
 }
 
 interface LeaderboardEntry {
@@ -160,7 +159,7 @@ export default function Profile() {
         </div>
 
         <div className="text-xs text-foreground/40 pt-4 border-t border-foreground/10">
-          <p>Subcultures: {user.subcultures || "Not set"}</p>
+          <p>Member since {new Date(Date.now()).toLocaleDateString()}</p>
         </div>
       </main>
     </div>

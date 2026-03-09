@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
   }
 
   const dbUser = db
-    .prepare("SELECT subcultures, score FROM users WHERE id = ?")
-    .get(user.id) as { subcultures: string | null; score: number };
+    .prepare("SELECT score FROM users WHERE id = ?")
+    .get(user.id) as { score: number };
 
   // Set httpOnly cookie with the Google ID token
   const cookieStore = await cookies();
@@ -40,6 +40,6 @@ export async function POST(req: NextRequest) {
   });
 
   return NextResponse.json({
-    user: { ...user, subcultures: dbUser.subcultures, score: dbUser.score },
+    user: { ...user, score: dbUser.score },
   });
 }

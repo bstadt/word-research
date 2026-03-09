@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getUser, getUserSubcultures } from "@/lib/auth";
+import { getUser } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 
 export async function GET() {
@@ -10,10 +10,10 @@ export async function GET() {
 
   const db = getDb();
   const dbUser = db
-    .prepare("SELECT subcultures, score FROM users WHERE id = ?")
-    .get(user.id) as { subcultures: string | null; score: number };
+    .prepare("SELECT score FROM users WHERE id = ?")
+    .get(user.id) as { score: number };
 
   return NextResponse.json({
-    user: { ...user, subcultures: dbUser.subcultures, score: dbUser.score },
+    user: { ...user, score: dbUser.score },
   });
 }

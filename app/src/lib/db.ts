@@ -35,7 +35,10 @@ function migrate(db: Database.Database) {
       subculture TEXT,
       lat REAL,
       lng REAL,
-      user_id TEXT NOT NULL,
+      loc_type TEXT,
+      user_id TEXT,
+      anonymous_id TEXT,
+      ip TEXT,
       created_at TEXT DEFAULT (datetime('now')),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
@@ -43,5 +46,6 @@ function migrate(db: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_words_word ON words(word);
     CREATE INDEX IF NOT EXISTS idx_words_user ON words(user_id);
     CREATE INDEX IF NOT EXISTS idx_words_created ON words(created_at);
+    CREATE INDEX IF NOT EXISTS idx_words_anonymous ON words(anonymous_id);
   `);
 }
