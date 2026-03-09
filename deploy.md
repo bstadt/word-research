@@ -1,5 +1,15 @@
 # Word Research — Deployment Guide
 
+## Production Server
+
+- **Host**: `3.143.141.90`
+- **User**: `ubuntu`
+- **SSH Key**: `~/.ssh/calco_key.pem`
+- **SSH Command**: `ssh -i ~/.ssh/calco_key.pem ubuntu@3.143.141.90`
+- **App Directory**: `/home/ubuntu/word-research/app`
+- **Branch**: `v1`
+- **Database**: `/home/ubuntu/word-research/app/data/word-research.db`
+
 ## Prerequisites
 
 - Ubuntu/Debian AWS instance (t3.small is fine to start)
@@ -124,8 +134,10 @@ Add:
 ## Updating
 
 ```bash
+ssh -i ~/.ssh/calco_key.pem ubuntu@3.143.141.90
 cd ~/word-research
-git pull
+git fetch origin
+git checkout <branch>  # e.g. v1
 cd app
 npm install
 npm run build
